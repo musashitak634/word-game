@@ -18,8 +18,36 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 500px;
+    margin: 0 auto;
   }
 
+  /* Start Screen Styles */
+  .start-screen {
+    text-align: center;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .welcome-title { font-size: 32px; font-weight: bold; color: #E63946; margin-bottom: 10px; }
+  .welcome-text { font-size: 18px; color: #444; margin-bottom: 20px; }
+  .start-btn {
+    font-size: 24px;
+    font-weight: bold;
+    background: #2DD368;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    padding: 15px 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(45, 211, 104, 0.3);
+    transition: transform 0.1s;
+  }
+  .start-btn:active { transform: scale(0.95); }
+
+  /* Game UI Styles */
   .top-bar { width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:0.85rem; }
   .score-pill { font-size:14px; font-weight:bold; background:#FFF3B0; color:#9B5E00; border-radius:999px; padding:4px 14px; border:2px solid #F5C842; }
   .lives { font-size:18px; letter-spacing:2px; }
@@ -70,10 +98,6 @@
     outline:none; user-select:none; -webkit-tap-highlight-color:transparent;
     word-break:break-word; line-height:1.3;
   }
-
-  .choice-btn:hover { transform:scale(1.04); box-shadow:0 4px 12px rgba(0,0,0,0.12); }
-  .choice-btn:active { transform:scale(0.94); }
-
   .choice-btn.c0 { background:#E0F4FF; color:#064E8A; border-color:#7CC3F0; }
   .choice-btn.c1 { background:#F0E6FF; color:#4B1A8A; border-color:#B899F5; }
   .choice-btn.c2 { background:#E6F9EE; color:#0A5C2D; border-color:#6DD9A0; }
@@ -83,248 +107,133 @@
   .choice-btn.wrong   { background:#FFD6D6!important; border-color:#FF6B6B!important; color:#8A0000!important; animation:shake 0.35s ease; }
   .choice-btn.disabled { opacity:0.35; pointer-events:none; }
 
-  @keyframes correctPop { 0%{transform:scale(1)} 50%{transform:scale(1.12)} 100%{transform:scale(1)} }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+  @keyframes burstIn { 0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1} }
 
-  .feedback-area { min-height:60px; text-align:center; font-size:22px; font-weight:bold; margin-bottom:0.25rem; display:flex; align-items:center; justify-content:center; }
-  .feedback-correct { color:#2DD368; }
-  .feedback-wrong   { color:#E63946; }
-  .emoji-burst { animation:burstIn 0.4s ease; display:inline-block; }
-  @keyframes burstIn { 0%{transform:scale(0) rotate(-20deg);opacity:0} 70%{transform:scale(1.2) rotate(5deg);opacity:1} 100%{transform:scale(1) rotate(0)} }
-
+  .feedback-area { min-height:60px; text-align:center; font-size:22px; font-weight:bold; margin-bottom:0.25rem; }
   .mascot-wrap { animation:bounce 1.2s ease-in-out infinite alternate; display:inline-block; }
   @keyframes bounce { 0%{transform:translateY(0)} 100%{transform:translateY(-8px)} }
 
   .progress-bar-wrap { width:100%; background:var(--color-border-tertiary); border-radius:999px; height:8px; overflow:hidden; }
   .progress-bar-fill { height:100%; background:linear-gradient(90deg,#74C69D,#2DD368); border-radius:999px; transition:width 0.4s ease; }
-  .round-label { font-size:12px; color:var(--color-text-secondary); text-align:right; width:100%; margin-top:4px; font-weight:bold; }
-
-  .end-screen { text-align:center; padding:1rem 0; display:flex; flex-direction:column; align-items:center; gap:14px; }
-  .end-title { font-size:30px; font-weight:bold; color:#E63946; }
-  .end-score { font-size:20px; font-weight:bold; color:#9B5E00; background:#FFF3B0; border-radius:12px; padding:8px 24px; border:2px solid #F5C842; }
-  .play-again-btn { font-family:Arial,sans-serif; font-size:20px; font-weight:bold; background:#E63946; color:white; border:none; border-radius:999px; padding:12px 40px; cursor:pointer; transition:transform 0.1s; }
-  .play-again-btn:active { transform:scale(0.95); }
 </style>
 </head>
 <body>
 <div id="game-root">
-  <h2 class="sr-only">Word Match Reading Game</h2>
   <div id="game-area"></div>
 </div>
 
 <script>
-const ALL_WORDS = [
-  "one","two","three","four","five","six","seven","eight","nine","ten",
-  "pants","skirt","sweater","T-shirt","handkerchief",
-  "cap","toothbrush","soap","towel","hairbrush","mirror",
-  "knife","fork","chopsticks","cup","glass","plate","dish","bowl",
-  "car","bus","motorcycle","bicycle","tricycle","train","airplane","helicopter"
-];
+const ALL_WORDS = ["one","two","three","four","five","six","seven","eight","nine","ten","pants","skirt","sweater","T-shirt","handkerchief","cap","toothbrush","soap","towel","hairbrush","mirror","knife","fork","chopsticks","cup","glass","plate","dish","bowl","car","bus","motorcycle","bicycle","tricycle","train","airplane","helicopter"];
 
 const ANIMALS = {
-  fox: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="56" height="56"><polygon points="10,28 4,8 20,20" fill="#E8601C"/><polygon points="12,26 7,12 19,21" fill="#F7C59F"/><polygon points="54,28 60,8 44,20" fill="#E8601C"/><polygon points="52,26 57,12 45,21" fill="#F7C59F"/><ellipse cx="32" cy="34" rx="20" ry="18" fill="#E8601C"/><ellipse cx="32" cy="38" rx="13" ry="11" fill="#F7C59F"/><ellipse cx="24" cy="30" rx="3.5" ry="3.5" fill="white"/><ellipse cx="40" cy="30" rx="3.5" ry="3.5" fill="white"/><circle cx="25" cy="30" r="2" fill="#222"/><circle cx="41" cy="30" r="2" fill="#222"/><circle cx="25.8" cy="29.2" r="0.7" fill="white"/><circle cx="41.8" cy="29.2" r="0.7" fill="white"/><ellipse cx="32" cy="37" rx="3" ry="2" fill="#222"/><path d="M29 40 Q32 43 35 40" stroke="#222" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="36" rx="4" ry="2.5" fill="#F4956A" opacity="0.5"/><ellipse cx="44" cy="36" rx="4" ry="2.5" fill="#F4956A" opacity="0.5"/></svg>`,
-  bear: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="56" height="56"><circle cx="16" cy="20" r="8" fill="#8B5E3C"/><circle cx="48" cy="20" r="8" fill="#8B5E3C"/><circle cx="16" cy="20" r="5" fill="#C49A6C"/><circle cx="48" cy="20" r="5" fill="#C49A6C"/><ellipse cx="32" cy="36" rx="22" ry="20" fill="#8B5E3C"/><ellipse cx="32" cy="40" rx="14" ry="12" fill="#C49A6C"/><ellipse cx="23" cy="31" rx="4" ry="4.5" fill="white"/><ellipse cx="41" cy="31" rx="4" ry="4.5" fill="white"/><circle cx="24" cy="31" r="2.5" fill="#1a1a2e"/><circle cx="42" cy="31" r="2.5" fill="#1a1a2e"/><circle cx="24.8" cy="30.2" r="0.8" fill="white"/><circle cx="42.8" cy="30.2" r="0.8" fill="white"/><ellipse cx="32" cy="39" rx="3.5" ry="2.5" fill="#5C3317"/><path d="M28.5 43 Q32 46.5 35.5 43" stroke="#5C3317" stroke-width="1.4" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="37" rx="4.5" ry="2.5" fill="#E07A8A" opacity="0.45"/><ellipse cx="44" cy="37" rx="4.5" ry="2.5" fill="#E07A8A" opacity="0.45"/></svg>`,
-  bunny: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="56" height="56"><ellipse cx="22" cy="14" rx="5" ry="12" fill="#F2C9D8"/><ellipse cx="42" cy="14" rx="5" ry="12" fill="#F2C9D8"/><ellipse cx="22" cy="14" rx="3" ry="9" fill="#F7A8BF"/><ellipse cx="42" cy="14" rx="3" ry="9" fill="#F7A8BF"/><ellipse cx="32" cy="36" rx="20" ry="19" fill="#F2C9D8"/><ellipse cx="32" cy="40" rx="13" ry="10" fill="white"/><ellipse cx="24" cy="31" rx="3.8" ry="4.2" fill="white"/><ellipse cx="40" cy="31" rx="3.8" ry="4.2" fill="white"/><circle cx="24.5" cy="31" r="2.3" fill="#5B3A8A"/><circle cx="40.5" cy="31" r="2.3" fill="#5B3A8A"/><circle cx="25.2" cy="30.2" r="0.7" fill="white"/><circle cx="41.2" cy="30.2" r="0.7" fill="white"/><ellipse cx="32" cy="38" rx="2.5" ry="1.8" fill="#F08CA0"/><path d="M29 41 Q32 44 35 41" stroke="#C06070" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="21" cy="37" rx="4" ry="2.2" fill="#F7A8BF" opacity="0.6"/><ellipse cx="43" cy="37" rx="4" ry="2.2" fill="#F7A8BF" opacity="0.6"/></svg>`,
-  elephant: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="56" height="56"><ellipse cx="18" cy="18" rx="8" ry="10" fill="#A0B4C8"/><ellipse cx="46" cy="18" rx="8" ry="10" fill="#A0B4C8"/><ellipse cx="32" cy="35" rx="22" ry="19" fill="#A0B4C8"/><ellipse cx="32" cy="42" rx="14" ry="11" fill="#C8D8E8"/><path d="M26 48 Q24 54 27 57 Q30 60 32 57 Q34 54 32 51" fill="#A0B4C8" stroke="#8898A8" stroke-width="0.8"/><ellipse cx="23" cy="30" rx="4.2" ry="4.5" fill="white"/><ellipse cx="41" cy="30" rx="4.2" ry="4.5" fill="white"/><circle cx="23.8" cy="30" r="2.6" fill="#2244AA"/><circle cx="41.8" cy="30" r="2.6" fill="#2244AA"/><circle cx="24.6" cy="29.2" r="0.8" fill="white"/><circle cx="42.6" cy="29.2" r="0.8" fill="white"/><ellipse cx="32" cy="40" rx="3" ry="2" fill="#8898A8"/><path d="M29 43 Q32 46 35 43" stroke="#8898A8" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="36" rx="4" ry="2.2" fill="#E0A0B0" opacity="0.5"/><ellipse cx="44" cy="36" rx="4" ry="2.2" fill="#E0A0B0" opacity="0.5"/></svg>`,
-  lion: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="56" height="56"><circle cx="32" cy="34" r="24" fill="#E8A83A" opacity="0.55"/><circle cx="32" cy="34" r="20" fill="#F5C040" opacity="0.7"/><ellipse cx="32" cy="36" rx="17" ry="16" fill="#F5C96A"/><ellipse cx="32" cy="41" rx="11" ry="9" fill="#FAEAC0"/><ellipse cx="24" cy="31" rx="3.8" ry="4.2" fill="white"/><ellipse cx="40" cy="31" rx="3.8" ry="4.2" fill="white"/><circle cx="24.6" cy="31" r="2.5" fill="#7B3F00"/><circle cx="40.6" cy="31" r="2.5" fill="#7B3F00"/><circle cx="25.3" cy="30.2" r="0.8" fill="white"/><circle cx="41.3" cy="30.2" r="0.8" fill="white"/><ellipse cx="32" cy="38" rx="3" ry="2.2" fill="#C0622A"/><path d="M28.5 42 Q32 45.5 35.5 42" stroke="#C0622A" stroke-width="1.4" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="37" rx="4.5" ry="2.5" fill="#F4A070" opacity="0.5"/><ellipse cx="44" cy="37" rx="4.5" ry="2.5" fill="#F4A070" opacity="0.5"/><ellipse cx="15" cy="20" rx="5" ry="6" fill="#E8A83A"/><ellipse cx="49" cy="20" rx="5" ry="6" fill="#E8A83A"/></svg>`,
-  deer: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="56" height="56"><path d="M18 18 Q14 8 10 6 Q14 10 16 16" fill="#8B5E2A"/><path d="M18 18 Q16 8 20 4 Q19 10 20 16" fill="#8B5E2A"/><path d="M46 18 Q50 8 54 6 Q50 10 48 16" fill="#8B5E2A"/><path d="M46 18 Q48 8 44 4 Q45 10 44 16" fill="#8B5E2A"/><ellipse cx="18" cy="20" rx="6" ry="7" fill="#C49A58"/><ellipse cx="46" cy="20" rx="6" ry="7" fill="#C49A58"/><ellipse cx="32" cy="36" rx="20" ry="19" fill="#C49A58"/><ellipse cx="32" cy="41" rx="13" ry="10" fill="#F0D8A8"/><ellipse cx="23" cy="30" rx="4" ry="4.5" fill="white"/><ellipse cx="41" cy="30" rx="4" ry="4.5" fill="white"/><circle cx="23.8" cy="30" r="2.5" fill="#3D2B1A"/><circle cx="41.8" cy="30" r="2.5" fill="#3D2B1A"/><circle cx="24.6" cy="29.2" r="0.8" fill="white"/><circle cx="42.6" cy="29.2" r="0.8" fill="white"/><ellipse cx="32" cy="39" rx="3" ry="2" fill="#B07840"/><path d="M29 42 Q32 45.5 35 42" stroke="#8B5E2A" stroke-width="1.3" fill="none" stroke-linecap="round"/><ellipse cx="20" cy="37" rx="4" ry="2.2" fill="#E09060" opacity="0.45"/><ellipse cx="44" cy="37" rx="4" ry="2.2" fill="#E09060" opacity="0.45"/></svg>`,
-  penguin: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="56" height="56"><ellipse cx="32" cy="36" rx="19" ry="21" fill="#1A1A2E"/><ellipse cx="32" cy="39" rx="12" ry="14" fill="white"/><ellipse cx="18" cy="30" rx="5" ry="9" fill="#1A1A2E"/><ellipse cx="46" cy="30" rx="5" ry="9" fill="#1A1A2E"/><circle cx="25" cy="28" r="5" fill="white"/><circle cx="39" cy="28" r="5" fill="white"/><circle cx="25.5" cy="28" r="3" fill="#1A1A2E"/><circle cx="39.5" cy="28" r="3" fill="#1A1A2E"/><circle cx="26.3" cy="27" r="1" fill="white"/><circle cx="40.3" cy="27" r="1" fill="white"/><ellipse cx="32" cy="36" rx="4" ry="2.5" fill="#F5A623"/><path d="M29 39 Q32 41.5 35 39" stroke="#D4881E" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="21" cy="35" rx="3.5" ry="2" fill="#3A5A9A" opacity="0.4"/><ellipse cx="43" cy="35" rx="3.5" ry="2" fill="#3A5A9A" opacity="0.4"/></svg>`
+  fox: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60"><circle cx="32" cy="34" r="20" fill="#E8601C"/><circle cx="32" cy="38" r="12" fill="#F7C59F"/><circle cx="24" cy="30" r="3" fill="white"/><circle cx="40" cy="30" r="3" fill="white"/><circle cx="24" cy="30" r="1.5" fill="#222"/><circle cx="40" cy="30" r="1.5" fill="#222"/><ellipse cx="32" cy="37" rx="3" ry="2" fill="#222"/></svg>`,
+  bear: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60"><circle cx="32" cy="36" r="20" fill="#8B5E3C"/><circle cx="32" cy="40" r="12" fill="#C49A6C"/><circle cx="24" cy="31" r="3" fill="white"/><circle cx="40" cy="31" r="3" fill="white"/><circle cx="24" cy="31" r="1.5" fill="#1a1a2e"/><circle cx="40" cy="31" r="1.5" fill="#1a1a2e"/><ellipse cx="32" cy="39" rx="3" ry="2" fill="#5C3317"/></svg>`,
+  bunny: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60"><circle cx="32" cy="36" r="19" fill="#F2C9D8"/><circle cx="32" cy="40" r="11" fill="white"/><circle cx="24" cy="31" r="3" fill="white"/><circle cx="40" cy="31" r="3" fill="white"/><circle cx="24" cy="31" r="1.5" fill="#5B3A8A"/><circle cx="40" cy="31" r="1.5" fill="#5B3A8A"/><ellipse cx="32" cy="38" rx="2" ry="1.5" fill="#F08CA0"/></svg>`
 };
 
-const ANIMAL_KEYS = Object.keys(ANIMALS);
 const TOTAL_ROUNDS = 10;
-const LIVES_START = 3;
-const CORRECT_MSGS = ["Great job! \u{1F31F}","Amazing! \u2B50","You got it! \u{1F389}","Superstar! \u{1F308}","Brilliant! \u{1F38A}","Well done! \u{1F973}"];
-const WRONG_MSGS_FIRST = ["Oops! Try once more! \u{1F4AA}","Not quite! One more try! \u{1F338}","Almost! Try again! \u{1F917}"];
-const WRONG_MSGS_FINAL = ["Good try! Keep going! \u{1F33B}","Nice effort! Next word! \u{1F308}"];
-
 let state = {
-  round:0, score:0, lives:LIVES_START,
-  words:[], current:null, choices:[],
-  firstAttemptDone:false, wrongOnFirst:false,
-  gameOver:false, animalKey:'fox'
+  round:0, score:0, lives:3, words:[], current:null, choices:[],
+  animalKey:'fox', started: false
 };
 
-// --- UPDATED SPEECH FUNCTION FOR CUSTOM MP3s ---
 function speak(word) {
-  // Visual feedback: find the button
-  const speakBtn = document.getElementById('speak-btn');
-  
-  // Create audio object pointing to your 'audio' folder
   const audio = new Audio(`audio/${word}.mp3`);
-  
-  if (speakBtn) speakBtn.classList.add('speaking');
-  
-  audio.play().catch(err => {
-    console.error("Audio play failed. Make sure audio/" + word + ".mp3 exists.", err);
-    if (speakBtn) speakBtn.classList.remove('speaking');
-  });
-
-  audio.onended = () => {
-    if (speakBtn) speakBtn.classList.remove('speaking');
-  };
+  const btn = document.getElementById('speak-btn');
+  if(btn) btn.classList.add('speaking');
+  audio.play().catch(e => console.log("Audio waiting for interaction or missing file."));
+  audio.onended = () => { if(btn) btn.classList.remove('speaking'); };
 }
 
-function shuffle(a){ let b=[...a]; for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
+function shuffle(a){ return [...a].sort(() => Math.random() - 0.5); }
 
-function pickAnimal(exclude){
-  let pool = ANIMAL_KEYS.filter(k=>k!==exclude);
-  return pool[Math.floor(Math.random()*pool.length)];
+function renderWelcome() {
+  const root = document.getElementById('game-area');
+  root.innerHTML = `
+    <div class="start-screen">
+      <span style="font-size: 60px;">📚</span>
+      <div class="welcome-title">Word Match!</div>
+      <div class="welcome-text">Listen to the word and find the match.</div>
+      <button class="start-btn" onclick="initGame()">Start Game</button>
+    </div>
+  `;
 }
 
-function startGame(){
+function initGame() {
   state.words = shuffle(ALL_WORDS).slice(0, TOTAL_ROUNDS);
-  state.round = 0; state.score = 0; state.lives = LIVES_START;
-  state.gameOver = false; state.firstAttemptDone = false; state.wrongOnFirst = false;
-  state.animalKey = ANIMAL_KEYS[Math.floor(Math.random()*ANIMAL_KEYS.length)];
+  state.round = 0; state.score = 0; state.lives = 3;
+  state.started = true;
   nextRound();
 }
 
-function nextRound(){
-  if(state.round >= TOTAL_ROUNDS || state.lives <= 0){ state.gameOver=true; render(); return; }
+function nextRound() {
+  if(state.round >= TOTAL_ROUNDS || state.lives <= 0) { renderEnd(); return; }
   state.current = state.words[state.round];
-  let wrongPool = ALL_WORDS.filter(w=>w!==state.current);
-  let wrongs = shuffle(wrongPool).slice(0,3);
-  state.choices = shuffle([state.current,...wrongs]);
-  state.firstAttemptDone = false;
-  state.wrongOnFirst = false;
-  state.animalKey = pickAnimal(state.animalKey);
+  let wrongs = shuffle(ALL_WORDS.filter(w=>w!==state.current)).slice(0,3);
+  state.choices = shuffle([state.current, ...wrongs]);
   render();
-  // Auto-speak after a delay (note: browsers may block auto-play until first click)
-  setTimeout(() => speak(state.current), 600);
+  setTimeout(() => speak(state.current), 500);
 }
 
-function handleChoice(word){
-  const correct = word === state.current;
-  if(!state.firstAttemptDone){
-    state.firstAttemptDone = true;
-    if(correct){
-      state.score++;
-      speak(word);
-      highlightAnswer(word, true, false);
-      showFeedback(true, false);
-      setTimeout(()=>{ state.round++; nextRound(); }, 1100);
-    } else {
-      state.wrongOnFirst = true;
-      state.lives--;
-      highlightAnswer(word, false, true);
-      showFeedback(false, true);
-      setTimeout(()=>{ renderSecondChance(word); }, 700);
-    }
+function handleChoice(word, idx) {
+  const btn = document.getElementById('btn-'+idx);
+  if(word === state.current) {
+    state.score++;
+    btn.classList.add('correct');
+    setTimeout(() => { state.round++; nextRound(); }, 1000);
   } else {
-    if(correct){
-      speak(word);
-      highlightAnswer(word, true, false);
-      showFeedback(true, true);
+    state.lives--;
+    btn.classList.add('wrong');
+    if(state.lives <= 0) {
+        setTimeout(() => renderEnd(), 1000);
     } else {
-      highlightAnswer(word, false, false);
-      showFeedback(false, false);
+        setTimeout(() => render(), 1000); // refresh UI to show lives lost
     }
-    setTimeout(()=>{ state.round++; nextRound(); }, 1200);
   }
 }
 
-function highlightAnswer(chosen, correct, firstWrong){
-  state.choices.forEach((w,i)=>{
-    const btn = document.getElementById('btn-'+i);
-    if(!btn) return;
-    if(correct && w===state.current){ btn.classList.add('correct'); }
-    if(!correct && w===chosen){ btn.classList.add('wrong'); }
-  });
-}
-
-function renderSecondChance(wrongWord){
-  state.choices.forEach((w,i)=>{
-    const btn = document.getElementById('btn-'+i);
-    if(!btn) return;
-    if(w===wrongWord) btn.classList.add('disabled');
-  });
-  const fb = document.getElementById('feedback');
-  if(fb) fb.innerHTML = `<span class="feedback-wrong emoji-burst">${WRONG_MSGS_FIRST[Math.floor(Math.random()*WRONG_MSGS_FIRST.length)]}</span>`;
-  const banner = document.getElementById('try-again-banner');
-  if(banner) banner.style.display = 'block';
-}
-
-function showFeedback(correct, isSecondChance){
-  const fb = document.getElementById('feedback');
-  if(!fb) return;
-  if(correct){
-    fb.innerHTML = `<span class="feedback-correct emoji-burst">${CORRECT_MSGS[Math.floor(Math.random()*CORRECT_MSGS.length)]}</span>`;
-  } else if(!isSecondChance){
-    fb.innerHTML = `<span class="feedback-wrong emoji-burst">${WRONG_MSGS_FINAL[Math.floor(Math.random()*WRONG_MSGS_FINAL.length)]}</span>`;
-  }
-}
-
-function livesStr(){
-  let s = '';
-  for(let i=0; i<state.lives; i++)      s += '\u2764\uFE0F';
-  for(let i=state.lives; i<LIVES_START; i++) s += '\u{1F5A4}';
-  return s;
-}
-
-function btnFontSize(w){ return w.length>10?'14px':w.length>7?'17px':'22px'; }
-
-function render(){
+function render() {
   const root = document.getElementById('game-area');
-  if(state.gameOver){ renderEnd(root); return; }
-  const progress = (state.round/TOTAL_ROUNDS)*100;
-  const colors = ['c0','c1','c2','c3'];
-  const wordLen = state.current.length;
-  const targetSize = wordLen>10?'26px':wordLen>7?'34px':'42px';
-
+  const progress = (state.round / TOTAL_ROUNDS) * 100;
   root.innerHTML = `
     <div class="top-bar">
-      <div class="score-pill">&#11088; ${state.score}</div>
-      <div class="lives">${livesStr()}</div>
-      <div class="round-pill">${state.round+1} / ${TOTAL_ROUNDS}</div>
+      <div class="score-pill">⭐ ${state.score}</div>
+      <div class="lives">${'❤️'.repeat(state.lives)}</div>
+      <div class="round-pill">${state.round + 1} / ${TOTAL_ROUNDS}</div>
     </div>
     <div class="target-section">
       <div class="find-label">Find this word</div>
-      <div class="target-word" style="font-size:${targetSize}">${state.current}<span class="star-decor">&#11088;</span></div>
-      <button id="speak-btn" class="speak-btn" title="Hear the word" onclick="speak('${state.current.replace(/'/g,"\\'")}')">&#128266; Hear it</button>
+      <div class="target-word">${state.current}<span class="star-decor">⭐</span></div><br>
+      <button id="speak-btn" class="speak-btn" onclick="speak('${state.current}')">🔊 Hear it</button>
     </div>
-    <div id="try-again-banner" class="try-again-banner" style="display:none">
-      &#128161; Try once more &mdash; you can do it!
-    </div>
-    <div class="choices-grid" id="choices">
-      ${state.choices.map((w,i)=>`
-        <button class="choice-btn ${colors[i]}" id="btn-${i}" style="font-size:${btnFontSize(w)}" data-idx="${i}">
-          ${w}
-        </button>
+    <div class="choices-grid">
+      ${state.choices.map((w,i)=> `
+        <button class="choice-btn c${i}" id="btn-${i}" onclick="handleChoice('${w}', ${i})">${w}</button>
       `).join('')}
     </div>
-    <div class="feedback-area" id="feedback">
-      <span class="mascot-wrap">${ANIMALS[state.animalKey]}</span>
+    <div class="feedback-area">
+      <span class="mascot-wrap">${ANIMALS.fox}</span>
     </div>
     <div class="progress-bar-wrap">
       <div class="progress-bar-fill" style="width:${progress}%"></div>
     </div>
-    <div class="round-label">${state.round} of ${TOTAL_ROUNDS} done</div>
   `;
-
-  state.choices.forEach((w,i)=>{
-    document.getElementById('btn-'+i).addEventListener('click', ()=>handleChoice(w));
-  });
 }
 
-function renderEnd(root){
-  const pct = Math.round((state.score/TOTAL_ROUNDS)*100);
-  let medal='\u{1F949}', endMsg="Keep practising!";
-  if(pct>=90){ medal='\u{1F3C6}'; endMsg="You're a star reader!"; }
-  else if(pct>=70){ medal='\u{1F947}'; endMsg="Brilliant reading!"; }
-  else if(pct>=50){ medal='\u{1F948}'; endMsg="Good work!"; }
+function renderEnd() {
+  const root = document.getElementById('game-area');
   root.innerHTML = `
-    <div class="end-screen">
-      <span style="font-size:64px">${medal}</span>
-      <div class="end-title">${endMsg}</div>
-      <div class="end-score">&#11088; ${state.score} / ${TOTAL_ROUNDS} correct</div>
-      <div style="font-size:13px;color:var(--color-text-secondary);font-weight:bold;">${pct}% accuracy</div>
-      <button class="play-again-btn" onclick="startGame()">Play Again!</button>
+    <div class="start-screen">
+      <span style="font-size: 60px;">🎉</span>
+      <div class="welcome-title">Game Over!</div>
+      <div class="welcome-text">You scored ${state.score} out of ${TOTAL_ROUNDS}</div>
+      <button class="start-btn" onclick="initGame()">Play Again</button>
     </div>
   `;
 }
 
-startGame();
+renderWelcome();
 </script>
 </body>
 </html>
