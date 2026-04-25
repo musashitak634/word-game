@@ -22,7 +22,6 @@
     margin: 0 auto;
   }
 
-  /* Start Screen Styles */
   .start-screen {
     text-align: center;
     padding: 2rem 1rem;
@@ -31,23 +30,14 @@
     align-items: center;
     gap: 20px;
   }
-  .welcome-title { font-size: 32px; font-weight: bold; color: #E63946; margin-bottom: 10px; }
-  .welcome-text { font-size: 18px; color: #444; margin-bottom: 20px; }
+  .welcome-title { font-size: 32px; font-weight: bold; color: #E63946; }
   .start-btn {
-    font-size: 24px;
-    font-weight: bold;
-    background: #2DD368;
-    color: white;
-    border: none;
-    border-radius: 999px;
-    padding: 15px 50px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(45, 211, 104, 0.3);
-    transition: transform 0.1s;
+    font-size: 24px; font-weight: bold; background: #2DD368; color: white;
+    border: none; border-radius: 999px; padding: 15px 50px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(45, 211, 104, 0.3); transition: transform 0.1s;
   }
   .start-btn:active { transform: scale(0.95); }
 
-  /* Game UI Styles */
   .top-bar { width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:0.85rem; }
   .score-pill { font-size:14px; font-weight:bold; background:#FFF3B0; color:#9B5E00; border-radius:999px; padding:4px 14px; border:2px solid #F5C842; }
   .lives { font-size:18px; letter-spacing:2px; }
@@ -55,121 +45,89 @@
 
   .target-section { text-align:center; margin-bottom:1rem; }
   .find-label { font-size:12px; color:var(--color-text-secondary); font-weight:bold; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:6px; }
-
   .target-word {
     font-size:42px; font-weight:bold; color:#E63946;
     background:#FFF0F0; border:3px dashed #F4A9A8; border-radius:20px;
     padding:10px 28px; display:inline-block; line-height:1.15; position:relative;
   }
 
-  .star-decor { position:absolute; font-size:16px; top:-10px; right:-10px; animation:spin 3s linear infinite; }
-  @keyframes spin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
-
   .speak-btn {
-    margin-top: 8px;
-    font-size: 22px;
-    background: #E0F4FF;
-    border: 2px solid #7CC3F0;
-    border-radius: 999px;
-    padding: 4px 16px;
-    cursor: pointer;
-    display: inline-block;
-    transition: transform 0.1s, background 0.1s;
-    user-select: none;
+    margin-top: 8px; font-size: 22px; background: #E0F4FF; border: 2px solid #7CC3F0;
+    border-radius: 999px; padding: 6px 20px; cursor: pointer; transition: transform 0.1s;
   }
-  .speak-btn:hover { background: #c6e8fa; transform: scale(1.08); }
-  .speak-btn:active { transform: scale(0.93); }
-  .speak-btn.speaking { background: #b3ddf7; animation: pulse 0.6s ease-in-out infinite alternate; }
+  .speak-btn.speaking { background: #b3ddf7; animation: pulse 0.6s infinite alternate; }
   @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(124,195,240,0.5)} 100%{box-shadow:0 0 0 6px rgba(124,195,240,0)} }
 
-  .try-again-banner {
-    width:100%; text-align:center; background:#FFF3B0; border:2px solid #F5C842;
-    border-radius:12px; padding:7px 0; font-size:15px; font-weight:bold;
-    color:#9B5E00; margin-bottom:0.6rem; animation:burstIn 0.3s ease;
-  }
-
   .choices-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; margin-bottom:0.85rem; }
-
   .choice-btn {
-    font-family:Arial,sans-serif; font-weight:bold;
-    border-radius:16px; border:3px solid transparent;
-    padding:14px 6px; cursor:pointer; text-align:center;
-    transition:transform 0.12s, box-shadow 0.12s;
-    outline:none; user-select:none; -webkit-tap-highlight-color:transparent;
-    word-break:break-word; line-height:1.3;
+    font-weight:bold; border-radius:16px; border:3px solid transparent;
+    padding:14px 6px; cursor:pointer; transition:transform 0.12s;
   }
   .choice-btn.c0 { background:#E0F4FF; color:#064E8A; border-color:#7CC3F0; }
   .choice-btn.c1 { background:#F0E6FF; color:#4B1A8A; border-color:#B899F5; }
   .choice-btn.c2 { background:#E6F9EE; color:#0A5C2D; border-color:#6DD9A0; }
   .choice-btn.c3 { background:#FFF3E6; color:#7A3800; border-color:#F7B269; }
+  .choice-btn.correct { background:#C8F7D8!important; border-color:#2DD368!important; }
+  .choice-btn.wrong { background:#FFD6D6!important; border-color:#FF6B6B!important; animation: shake 0.35s; }
 
-  .choice-btn.correct { background:#C8F7D8!important; border-color:#2DD368!important; color:#0A5C2D!important; animation:correctPop 0.35s ease; }
-  .choice-btn.wrong   { background:#FFD6D6!important; border-color:#FF6B6B!important; color:#8A0000!important; animation:shake 0.35s ease; }
-  .choice-btn.disabled { opacity:0.35; pointer-events:none; }
-
-  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
-  @keyframes burstIn { 0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1} }
-
-  .feedback-area { min-height:60px; text-align:center; font-size:22px; font-weight:bold; margin-bottom:0.25rem; }
-  .mascot-wrap { animation:bounce 1.2s ease-in-out infinite alternate; display:inline-block; }
-  @keyframes bounce { 0%{transform:translateY(0)} 100%{transform:translateY(-8px)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+  .feedback-area { min-height:80px; display:flex; align-items:center; justify-content:center; }
+  .mascot-wrap { animation: bounce 1.2s infinite alternate; }
+  @keyframes bounce { 0%{transform:translateY(0)} 100%{transform:translateY(-10px)} }
 
   .progress-bar-wrap { width:100%; background:var(--color-border-tertiary); border-radius:999px; height:8px; overflow:hidden; }
-  .progress-bar-fill { height:100%; background:linear-gradient(90deg,#74C69D,#2DD368); border-radius:999px; transition:width 0.4s ease; }
+  .progress-bar-fill { height:100%; background:linear-gradient(90deg,#74C69D,#2DD368); transition:width 0.4s; }
 </style>
 </head>
 <body>
-<div id="game-root">
-  <div id="game-area"></div>
-</div>
+<div id="game-root"><div id="game-area"></div></div>
 
 <script>
 const ALL_WORDS = ["one","two","three","four","five","six","seven","eight","nine","ten","pants","skirt","sweater","T-shirt","handkerchief","cap","toothbrush","soap","towel","hairbrush","mirror","knife","fork","chopsticks","cup","glass","plate","dish","bowl","car","bus","motorcycle","bicycle","tricycle","train","airplane","helicopter"];
 
 const ANIMALS = {
-  fox: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60"><circle cx="32" cy="34" r="20" fill="#E8601C"/><circle cx="32" cy="38" r="12" fill="#F7C59F"/><circle cx="24" cy="30" r="3" fill="white"/><circle cx="40" cy="30" r="3" fill="white"/><circle cx="24" cy="30" r="1.5" fill="#222"/><circle cx="40" cy="30" r="1.5" fill="#222"/><ellipse cx="32" cy="37" rx="3" ry="2" fill="#222"/></svg>`,
-  bear: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60"><circle cx="32" cy="36" r="20" fill="#8B5E3C"/><circle cx="32" cy="40" r="12" fill="#C49A6C"/><circle cx="24" cy="31" r="3" fill="white"/><circle cx="40" cy="31" r="3" fill="white"/><circle cx="24" cy="31" r="1.5" fill="#1a1a2e"/><circle cx="40" cy="31" r="1.5" fill="#1a1a2e"/><ellipse cx="32" cy="39" rx="3" ry="2" fill="#5C3317"/></svg>`,
-  bunny: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="60" height="60"><circle cx="32" cy="36" r="19" fill="#F2C9D8"/><circle cx="32" cy="40" r="11" fill="white"/><circle cx="24" cy="31" r="3" fill="white"/><circle cx="40" cy="31" r="3" fill="white"/><circle cx="24" cy="31" r="1.5" fill="#5B3A8A"/><circle cx="40" cy="31" r="1.5" fill="#5B3A8A"/><ellipse cx="32" cy="38" rx="2" ry="1.5" fill="#F08CA0"/></svg>`
+  fox: `<svg viewBox="0 0 64 64" width="60"><circle cx="32" cy="34" r="20" fill="#E8601C"/><circle cx="32" cy="38" r="12" fill="#F7C59F"/><circle cx="24" cy="30" r="3" fill="white"/><circle cx="40" cy="30" r="3" fill="white"/><circle cx="24" cy="30" r="1.5" fill="#222"/><circle cx="40" cy="30" r="1.5" fill="#222"/><ellipse cx="32" cy="37" rx="3" ry="2" fill="#222"/></svg>`,
+  bear: `<svg viewBox="0 0 64 64" width="60"><circle cx="16" cy="20" r="8" fill="#8B5E3C"/><circle cx="48" cy="20" r="8" fill="#8B5E3C"/><circle cx="32" cy="36" r="20" fill="#8B5E3C"/><circle cx="32" cy="40" r="12" fill="#C49A6C"/><circle cx="24" cy="31" r="3" fill="white"/><circle cx="40" cy="31" r="3" fill="white"/><circle cx="32" cy="39" rx="3" ry="2" fill="#5C3317"/></svg>`,
+  bunny: `<svg viewBox="0 0 64 64" width="60"><ellipse cx="22" cy="14" rx="5" ry="12" fill="#F2C9D8"/><ellipse cx="42" cy="14" rx="5" ry="12" fill="#F2C9D8"/><circle cx="32" cy="36" r="19" fill="#F2C9D8"/><circle cx="32" cy="40" r="11" fill="white"/><circle cx="24" cy="31" r="3" fill="white"/><circle cx="40" cy="31" r="3" fill="white"/><circle cx="32" cy="38" r="2" fill="#F08CA0"/></svg>`,
+  lion: `<svg viewBox="0 0 64 64" width="65"><circle cx="32" cy="34" r="24" fill="#E8A83A"/><circle cx="15" cy="20" r="6" fill="#E8A83A"/><circle cx="49" cy="20" r="6" fill="#E8A83A"/><circle cx="32" cy="36" r="17" fill="#F5C96A"/><circle cx="32" cy="41" r="10" fill="#FAEAC0"/><circle cx="24" cy="31" r="3" fill="white"/><circle cx="40" cy="31" r="3" fill="white"/><circle cx="24" cy="31" r="1.5" fill="#7B3F00"/><circle cx="40" cy="31" r="1.5" fill="#7B3F00"/><ellipse cx="32" cy="38" rx="3" ry="2" fill="#C0622A"/></svg>`,
+  elephant: `<svg viewBox="0 0 64 64" width="60"><circle cx="18" cy="18" r="10" fill="#A0B4C8"/><circle cx="46" cy="18" r="10" fill="#A0B4C8"/><circle cx="32" cy="35" r="20" fill="#A0B4C8"/><circle cx="32" cy="42" r="12" fill="#C8D8E8"/><path d="M28 48 Q26 56 32 56" fill="none" stroke="#A0B4C8" stroke-width="4"/><circle cx="23" cy="30" r="3" fill="white"/><circle cx="41" cy="30" r="3" fill="white"/></svg>`,
+  deer: `<svg viewBox="0 0 64 64" width="60"><path d="M18 18 Q10 4 6 4" stroke="#8B5E2A" fill="none" stroke-width="3"/><path d="M46 18 Q54 4 58 4" stroke="#8B5E2A" fill="none" stroke-width="3"/><circle cx="32" cy="36" r="19" fill="#C49A58"/><circle cx="32" cy="41" r="11" fill="#F0D8A8"/><circle cx="23" cy="30" r="3" fill="white"/><circle cx="41" cy="30" r="3" fill="white"/></svg>`,
+  penguin: `<svg viewBox="0 0 64 64" width="60"><ellipse cx="32" cy="36" rx="19" ry="21" fill="#1A1A2E"/><ellipse cx="32" cy="39" rx="12" ry="14" fill="white"/><circle cx="25" cy="28" r="4" fill="white"/><circle cx="39" cy="28" r="4" fill="white"/><path d="M30 36 L32 39 L34 36" fill="#F5A623"/></svg>`
 };
 
+const ANIMAL_KEYS = Object.keys(ANIMALS);
 const TOTAL_ROUNDS = 10;
-let state = {
-  round:0, score:0, lives:3, words:[], current:null, choices:[],
-  animalKey:'fox', started: false
-};
+let state = { round:0, score:0, lives:3, words:[], current:null, choices:[], animalKey:'fox' };
 
 function speak(word) {
   const audio = new Audio(`audio/${word}.mp3`);
   const btn = document.getElementById('speak-btn');
   if(btn) btn.classList.add('speaking');
-  audio.play().catch(e => console.log("Audio waiting for interaction or missing file."));
+  audio.play().catch(() => btn.classList.remove('speaking'));
   audio.onended = () => { if(btn) btn.classList.remove('speaking'); };
 }
 
 function shuffle(a){ return [...a].sort(() => Math.random() - 0.5); }
 
 function renderWelcome() {
-  const root = document.getElementById('game-area');
-  root.innerHTML = `
+  document.getElementById('game-area').innerHTML = `
     <div class="start-screen">
       <span style="font-size: 60px;">📚</span>
       <div class="welcome-title">Word Match!</div>
-      <div class="welcome-text">Listen to the word and find the match.</div>
       <button class="start-btn" onclick="initGame()">Start Game</button>
-    </div>
-  `;
+    </div>`;
 }
 
 function initGame() {
   state.words = shuffle(ALL_WORDS).slice(0, TOTAL_ROUNDS);
   state.round = 0; state.score = 0; state.lives = 3;
-  state.started = true;
   nextRound();
 }
 
 function nextRound() {
   if(state.round >= TOTAL_ROUNDS || state.lives <= 0) { renderEnd(); return; }
   state.current = state.words[state.round];
+  state.animalKey = ANIMAL_KEYS[Math.floor(Math.random()*ANIMAL_KEYS.length)];
   let wrongs = shuffle(ALL_WORDS.filter(w=>w!==state.current)).slice(0,3);
   state.choices = shuffle([state.current, ...wrongs]);
   render();
@@ -179,24 +137,18 @@ function nextRound() {
 function handleChoice(word, idx) {
   const btn = document.getElementById('btn-'+idx);
   if(word === state.current) {
-    state.score++;
-    btn.classList.add('correct');
+    state.score++; btn.classList.add('correct');
     setTimeout(() => { state.round++; nextRound(); }, 1000);
   } else {
-    state.lives--;
-    btn.classList.add('wrong');
-    if(state.lives <= 0) {
-        setTimeout(() => renderEnd(), 1000);
-    } else {
-        setTimeout(() => render(), 1000); // refresh UI to show lives lost
-    }
+    state.lives--; btn.classList.add('wrong');
+    if(state.lives <= 0) setTimeout(renderEnd, 1000);
+    else setTimeout(render, 1000);
   }
 }
 
 function render() {
-  const root = document.getElementById('game-area');
   const progress = (state.round / TOTAL_ROUNDS) * 100;
-  root.innerHTML = `
+  document.getElementById('game-area').innerHTML = `
     <div class="top-bar">
       <div class="score-pill">⭐ ${state.score}</div>
       <div class="lives">${'❤️'.repeat(state.lives)}</div>
@@ -204,33 +156,24 @@ function render() {
     </div>
     <div class="target-section">
       <div class="find-label">Find this word</div>
-      <div class="target-word">${state.current}<span class="star-decor">⭐</span></div><br>
-      <button id="speak-btn" class="speak-btn" onclick="speak('${state.current}')">🔊 Hear it</button>
+      <div class="target-word">${state.current}</div><br>
+      <button id="speak-btn" class="speak-btn" onclick="speak('${state.current}')">🔊 Listen</button>
     </div>
     <div class="choices-grid">
-      ${state.choices.map((w,i)=> `
-        <button class="choice-btn c${i}" id="btn-${i}" onclick="handleChoice('${w}', ${i})">${w}</button>
-      `).join('')}
+      ${state.choices.map((w,i)=> `<button class="choice-btn c${i}" id="btn-${i}" onclick="handleChoice('${w}', ${i})">${w}</button>`).join('')}
     </div>
-    <div class="feedback-area">
-      <span class="mascot-wrap">${ANIMALS.fox}</span>
-    </div>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar-fill" style="width:${progress}%"></div>
-    </div>
-  `;
+    <div class="feedback-area"><span class="mascot-wrap">${ANIMALS[state.animalKey]}</span></div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${progress}%"></div></div>`;
 }
 
 function renderEnd() {
-  const root = document.getElementById('game-area');
-  root.innerHTML = `
+  document.getElementById('game-area').innerHTML = `
     <div class="start-screen">
       <span style="font-size: 60px;">🎉</span>
       <div class="welcome-title">Game Over!</div>
-      <div class="welcome-text">You scored ${state.score} out of ${TOTAL_ROUNDS}</div>
+      <p>Score: ${state.score} / ${TOTAL_ROUNDS}</p>
       <button class="start-btn" onclick="initGame()">Play Again</button>
-    </div>
-  `;
+    </div>`;
 }
 
 renderWelcome();
